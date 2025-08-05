@@ -42,7 +42,10 @@ def convert_word_to_pdf():
         return {'error': 'Conversion failed'}, 500
 
     return send_file(output_path, as_attachment=True)
-    @app.route('/convert/pdf-to-word', methods=['POST'])
+
+
+# ✅ New route added correctly OUTSIDE the previous function
+@app.route('/convert/pdf-to-word', methods=['POST'])
 def convert_pdf_to_word():
     if 'file' not in request.files:
         return {'error': 'No file uploaded'}, 400
@@ -67,4 +70,5 @@ def convert_pdf_to_word():
         return {'error': 'Conversion failed'}, 500
 
     return send_file(output_path, as_attachment=True)
+
 
