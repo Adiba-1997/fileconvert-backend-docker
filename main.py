@@ -42,3 +42,29 @@ def convert_word_to_pdf():
         return {'error': 'Conversion failed'}, 500
 
     return send_file(output_path, as_attachment=True)
+    @app.route('/convert/pdf-to-word', methods=['POST'])
+def convert_pdf_to_word():
+    if 'file' not in request.files:
+        return {'error': 'No file uploaded'}, 400
+
+    file = request.files['file']
+    filename = secure_filename(file.filename)
+    input_path = os.path.join(UPLOAD_FOLDER, filename)
+    file.save(input_path)
+
+    output_filename = filename.rsplit('.', 1)[0] + '.docx'
+    output_path = os.path.join(CONVERTED_FOLDER, output_filename)
+
+    try:
+        subprocess.run([
+            'libreoffice',
+            '--headless',
+            '--convert-to', 'docx',
+            '--outdir', CONVERTED_FOLDER,
+            input_path
+        ], check=True)
+    except subprocess.CalledProcessError:
+        return {'error': 'Conversion failed'}, 500
+
+    return send_file(output_path, as_attachment=True)
+
